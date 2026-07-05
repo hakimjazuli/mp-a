@@ -1,0 +1,27 @@
+{
+  "name": "mp-a",
+  "module": "./generated/vivth/exports/all.mjs",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "vivth": "^1.5.11"
+  },
+  "peerDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "scripts": {
+    "dev": "bun ./dev/main.mjs",
+    "t-w": "tsc --watch"
+  },
+  "main": "./generated/vivth/exports/all.mjs",
+  "exports": {
+    "./all": {
+      "import": "./generated/vivth/exports/all.mjs",
+      "types": "./generated/types/generated/vivth/exports/all.d.mts"
+    },
+    "./browser": {
+      "import": "./generated/vivth/exports/browser.mjs",
+      "types": "./generated/types/generated/vivth/exports/browser.d.mts"
+    }
+  }
+}
