@@ -10,7 +10,7 @@ import { trySync } from './trySync.mjs';
 
 /**
  * @description
- * - available on global `on window['is-mp-a']['MpA']`;
+ * - available on global `window['is-mp-a']['MpA']`;
  * - class helper for `[is="mp-a"]`;
  * >- customWebComponent extends HTMLAnchorElement via `[is]`;
  */

@@ -194,7 +194,7 @@ runtime assets needed to activate the engine::
 
 #### reference: `MpA`
 
-- available on global `on window['is-mp-a']['MpA']`;
+- available on global `window['is-mp-a']['MpA']`;
 - class helper for `[is="mp-a"]`;
 
 > - customWebComponent extends HTMLAnchorElement via `[is]`;
