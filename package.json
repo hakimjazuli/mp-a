@@ -1,5 +1,5 @@
 {
-	"name": "mp-a",
+	"name": "@hakim_jazuli/mp-a",
 	"module": "./generated/vivth/exports/all.mjs",
 	"version": "0.1.0",
 	"type": "module",
