@@ -125,7 +125,7 @@ runtime assets needed to activate the engine::
     src="/assets/js/MonkeyPAtch.min.js"
   ></script>
   <!-- other head Elements -->
-  <!-- other scripts need to be after monkey patch -->
+  <!-- other scripts need to be placed after monkey patch -->
 </head>
 ```
 
@@ -139,7 +139,7 @@ runtime assets needed to activate the engine::
     // the actual script
   </script>
   <!-- other head Elements -->
-  <!-- other scripts need to be after monkey patch -->
+  <!-- other scripts need to be placed after monkey patch -->
 </head>
 ```
 
@@ -149,8 +149,8 @@ runtime assets needed to activate the engine::
 <body>
   <!-- other body elements -->
   <!-- <script src="/assets/js/ungap-custom-elements.min.js"></script> -->
-  <script src="/assets/js/main.js"></script>
   <!-- other scripts -->
+  <script src="/assets/js/main.js"></script>
 </body>
 ```
 
@@ -160,8 +160,8 @@ runtime assets needed to activate the engine::
 <body>
   <!-- other body elements -->
   <!-- <script src="/assets/js/ungap-custom-elements.min.js"></script> -->
-  <script src="/assets/js/main.min.js"></script>
   <!-- other scripts -->
+  <script src="/assets/js/main.min.js"></script>
 </body>
 ```
 
@@ -177,8 +177,8 @@ runtime assets needed to activate the engine::
 <body>
   <!-- other body elements -->
   <script src="/assets/js/ungap-custom-elements.min.js"></script>
-  <script src="/assets/js/main.min.js"></script>
   <!-- other scripts -->
+  <script src="/assets/js/main.min.js"></script>
 </body>
 ```
 
