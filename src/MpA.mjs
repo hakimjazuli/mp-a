@@ -10,7 +10,9 @@ import { trySync } from './trySync.mjs';
 
 /**
  * @description
- * `MpA` description placeholder;
+ * - available on global `on window['is-mp-a']['MpA']`;
+ * - class helper for `[is="mp-a"]`;
+ * >- customWebComponent extends HTMLAnchorElement via `[is]`;
  */
 export class MpA extends HTMLAnchorElement {
 	static #q = new qChannel();
@@ -19,8 +21,22 @@ export class MpA extends HTMLAnchorElement {
 	 * - string document to be displayed when this class fails to fetch or parse document string;
 	 * - can be overrided;
 	 * @type {string}
+	 * @example
+	 * window['is-mp-a']['MpA'] = `<!DOCTYPE html>
+	 *<html lang="en">
+	 *<head>
+	 *  <meta charset="UTF-8">
+	 *  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 *  <title>error</title>
+	 *</head>
+	 *<body>
+	 *  my client side routing error page
+	 *  <a href="/">go to home</a>
+	 *</body>
+	 *</html>`
 	 */
-	static routerErrorDocString = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>bsx: routing error</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,sans-serif;background:#f9f9f9;color:#333;}.container{display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;height:100%;text-align:center;padding:1rem;box-sizing:border-box;}h1{font-size:clamp(1.5rem,4vw,2.5rem);margin-bottom:0.5rem;}p{margin:0.5rem 0 1.5rem;max-width:90%;font-size:clamp(1rem,2.5vw,1.25rem);}a{color:#0066cc;text-decoration:none;font-weight:500;font-size:clamp(1rem,2.5vw,1.25rem);}a:hover{text-decoration:underline;}</style></head><body><div class="container"><h1>Routing Error</h1><p>The bsx client‑side MPA routing failed while fetching or parsing the page.</p><a href="/">Go back home</a></div></body></html>`;
+	static routerErrorDocString =
+		'<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>mp-a: routing error</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,sans-serif;background:#f9f9f9;color:#333;}.container{display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;height:100%;text-align:center;padding:1rem;box-sizing:border-box;}h1{font-size:clamp(1.5rem,4vw,2.5rem);margin-bottom:0.5rem;}p{margin:0.5rem 0 1.5rem;max-width:90%;font-size:clamp(1rem,2.5vw,1.25rem);}a{color:#0066cc;text-decoration:none;font-weight:500;font-size:clamp(1rem,2.5vw,1.25rem);}a:hover{text-decoration:underline;}</style></head><body><div class="container"><h1>Routing Error</h1><p>The mp-a client‑side MPA routing failed while fetching or parsing the page.</p><a href="/">Go back home</a></div></body></html>';
 	/**
 	 * @param {PointerEvent} ev
 	 * @returns {void}
@@ -66,7 +82,7 @@ export class MpA extends HTMLAnchorElement {
 	static #isLexicallySamePath(currentPath, updateTo) {
 		const currentURL = new URL(currentPath, location.origin);
 		const updateURL = new URL(updateTo, location.origin);
-		return currentURL.pathname === updateURL.pathname && currentURL.search === updateURL.search;
+		return currentURL.pathname == updateURL.pathname && currentURL.search == updateURL.search;
 	}
 	/**
 	 * @param {string} href
@@ -78,7 +94,7 @@ export class MpA extends HTMLAnchorElement {
 			if (url.protocol !== 'http:' && url.protocol !== 'https:') {
 				return false;
 			}
-			return url.origin === location.origin;
+			return url.origin == location.origin;
 		});
 		if (error) {
 			return true;
@@ -182,8 +198,8 @@ export class MpA extends HTMLAnchorElement {
 				return;
 			}
 			if (ref instanceof HTMLScriptElement) {
-				if (ref.id === 'bsx-[M]onkey[PA]tch') {
-					if (!document.head.querySelector('[id="bsx-[M]onkey[PA]tch"]')) {
+				if (ref.id == 'is-mp-a:m-onkey-pa-tched') {
+					if (!document.head.querySelector('[id="is-mp-a:m-onkey-pa-tched"]')) {
 						document.head.appendChild(ref);
 					} else {
 						ref.remove();
@@ -348,7 +364,8 @@ export class MpA extends HTMLAnchorElement {
 			if (
 				!anchorElement ||
 				anchorElement.hasAttribute(notMpA) ||
-				anchorElement.getAttribute('href')?.startsWith('#')
+				anchorElement.getAttribute('href')?.startsWith('#') ||
+				anchorElement.getAttribute('is') == 'mp-a'
 			) {
 				return;
 			}

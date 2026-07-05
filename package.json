@@ -23,5 +23,8 @@
       "import": "./generated/vivth/exports/browser.mjs",
       "types": "./generated/types/generated/vivth/exports/browser.d.mts"
     }
+  },
+  "dependencies": {
+    "@ungap/custom-elements": "^1.3.0"
   }
 }
