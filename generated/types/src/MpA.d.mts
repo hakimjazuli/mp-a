@@ -1,6 +1,8 @@
 /**
  * @description
- * `MpA` description placeholder;
+ * - available on global `window['is-mp-a']['MpA']`;
+ * - class helper for `[is="mp-a"]`;
+ * >- customWebComponent extends HTMLAnchorElement via `[is]`;
  */
 export class MpA extends HTMLAnchorElement {
     static #q: qChannel<import("./qChannel.mjs").AnyButUndefined>;
@@ -9,6 +11,19 @@ export class MpA extends HTMLAnchorElement {
      * - string document to be displayed when this class fails to fetch or parse document string;
      * - can be overrided;
      * @type {string}
+     * @example
+     * window['is-mp-a']['MpA'] = `<!DOCTYPE html>
+     *<html lang="en">
+     *<head>
+     *  <meta charset="UTF-8">
+     *  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     *  <title>error</title>
+     *</head>
+     *<body>
+     *  my client side routing error page
+     *  <a href="/">go to home</a>
+     *</body>
+     *</html>`
      */
     static routerErrorDocString: string;
     /**
