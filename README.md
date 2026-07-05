@@ -214,17 +214,17 @@ runtime assets needed to activate the engine::
 
 ```js
 window["is-mp-a"]["MpA"]["routerErrorDocString"] = `<!DOCTYPE html>
-	<html lang="en">
-	<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>error</title>
-	</head>
-	<body>
-  my client side routing error page
-  <a href="/">go to home</a>
-	</body>
-	</html>`;
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>error</title>
+ </head>
+ <body>
+   my client side routing error page
+   <a not-mp-a href="/">go to home</a>
+ </body>
+ </html>`;
 ```
 
 *) <sub>[go to exported-api-and-type-list](#exported-api-and-type-list)</sub>
