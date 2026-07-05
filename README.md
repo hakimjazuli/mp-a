@@ -213,7 +213,7 @@ runtime assets needed to activate the engine::
 - <i>example</i>:
 
 ```js
-window["is-mp-a"]["MpA"] = `<!DOCTYPE html>
+window["is-mp-a"]["MpA"]["routerErrorDocString"] = `<!DOCTYPE html>
 	<html lang="en">
 	<head>
   <meta charset="UTF-8">

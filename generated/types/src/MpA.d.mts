@@ -12,7 +12,7 @@ export class MpA extends HTMLAnchorElement {
      * - can be overrided;
      * @type {string}
      * @example
-     * window['is-mp-a']['MpA'] = `<!DOCTYPE html>
+     * window['is-mp-a']['MpA']['routerErrorDocString'] = `<!DOCTYPE html>
      *<html lang="en">
      *<head>
      *  <meta charset="UTF-8">
