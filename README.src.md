@@ -140,7 +140,7 @@ runtime assets needed to activate the engine::
 </head>
 ```
 
-- `main.js`: main script to add Client Side Routing Behaviour;
+- `main.js`: main script to add Client Side Routing Behaviour, needs to be the last script right before body closing tag;
 
 ```html
 <body>
@@ -151,7 +151,7 @@ runtime assets needed to activate the engine::
 </body>
 ```
 
-- `main.min.js`: minified main script;
+- `main.min.js`: minified main script, needs to be the last script right before body closing tag;
 
 ```html
 <body>

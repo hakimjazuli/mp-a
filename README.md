@@ -143,7 +143,7 @@ runtime assets needed to activate the engine::
 </head>
 ```
 
-- `main.js`: main script to add Client Side Routing Behaviour;
+- `main.js`: main script to add Client Side Routing Behaviour, needs to be the last script right before body closing tag;
 
 ```html
 <body>
@@ -154,7 +154,7 @@ runtime assets needed to activate the engine::
 </body>
 ```
 
-- `main.min.js`: minified main script;
+- `main.min.js`: minified main script, needs to be the last script right before body closing tag;
 
 ```html
 <body>
@@ -213,18 +213,20 @@ runtime assets needed to activate the engine::
 - <i>example</i>:
 
 ```js
-window["is-mp-a"]["MpA"]["routerErrorDocString"] = `<!DOCTYPE html>
- <html lang="en">
- <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>error</title>
- </head>
- <body>
-   my client side routing error page
-   <a not-mp-a href="/">go to home</a>
- </body>
- </html>`;
+document.addEventListener("DOMContentLoaded", () => {
+  window["is-mp-a"]["MpA"]["routerErrorDocString"] = `<!DOCTYPE html>
+ 	<html lang="en">
+ 	<head>
+ 	  <meta charset="UTF-8">
+ 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 	  <title>error</title>
+ 	</head>
+ 	<body>
+ 	  my client side routing error page
+ 	  <a not-mp-a href="/">go to home</a>
+ 	</body>
+ 	</html>`;
+});
 ```
 
 *) <sub>[go to exported-api-and-type-list](#exported-api-and-type-list)</sub>
