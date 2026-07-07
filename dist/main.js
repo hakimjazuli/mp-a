@@ -189,6 +189,18 @@
     static #ismpatched = "is-mp-a:m-onkey-pa-tched";
     static #ismpatchedID = '[id="is-mp-a:m-onkey-pa-tched"]';
     /**
+     * @param {Event} ev
+     * @returns {void}
+     */
+    static #prefetch = (ev) => {
+      const anchorElement = _MpA.#getClosestValidMpAAnchor(ev);
+      if (!anchorElement) {
+        return;
+      }
+      ev.preventDefault();
+      _MpA.#getPrefetch(anchorElement);
+    };
+    /**
      * @description
      * - string document to be displayed when this class fails to fetch or parse document string;
      * - can be overrided;
@@ -217,18 +229,41 @@
     #onclick_ = (ev) => {
       _MpA.#onclick(this, ev);
     };
+    /**
+     * @param {Event} ev
+     */
+    #prefetch_ = (ev) => {
+      ev.preventDefault();
+      _MpA.#getPrefetch(this);
+    };
     connectedCallback() {
-      const prefetch = _MpA.#prefetch;
-      this.addEventListener("mousedown", prefetch);
-      this.addEventListener("keydown", prefetch);
+      _MpA.#chainAddEvent(this, this.#prefetch_, "mousedown", "keydown");
       this.addEventListener("click", this.#onclick_);
     }
     disconnectedCallback() {
-      const prefetch = _MpA.#prefetch;
-      this.removeEventListener("mousedown", prefetch);
-      this.removeEventListener("keydown", prefetch);
+      _MpA.#chainRemoveEvent(this, this.#prefetch_, "mousedown", "keydown");
       this.removeEventListener("click", this.#onclick_);
     }
+    /**
+     * @param {any} object
+     * @param {(ev: Event) => any} event
+     * @param {( keyof HTMLElementEventMap)[]} types
+     */
+    static #chainAddEvent = (object, event, ...types) => {
+      forOfSync(types, (type) => {
+        object.addEventListener(type, event);
+      });
+    };
+    /**
+     * @param {any} object
+     * @param {(ev: Event) => any} event
+     * @param {( keyof HTMLElementEventMap)[]} types
+     */
+    static #chainRemoveEvent = (object, event, ...types) => {
+      forOfSync(types, (type) => {
+        object.removeventListener(type, event);
+      });
+    };
     /**
      * @param {HTMLAnchorElement} anchorElement
      * @param {Event} event
@@ -541,18 +576,6 @@
       }
       return anchorElement;
     };
-    /**
-     * @param {Event} ev
-     * @returns {void}
-     */
-    static #prefetch = (ev) => {
-      const anchorElement = _MpA.#getClosestValidMpAAnchor(ev);
-      if (!anchorElement) {
-        return;
-      }
-      ev.preventDefault();
-      this.#getPrefetch(anchorElement);
-    };
     static {
       const mpaID = _MpA.#mpaID;
       if (!window[mpaID]) {
@@ -564,9 +587,7 @@
         _MpA.#routeChangeCall(window.location.href, false);
       });
       const notMpA = _MpA.#notMpA;
-      const prefetch = _MpA.#prefetch;
-      document.addEventListener("mousedown", prefetch);
-      document.addEventListener("keydown", prefetch);
+      _MpA.#chainAddEvent(document, _MpA.#prefetch, "mousedown", "keydown");
       document.addEventListener("click", (ev) => {
         const anchorElement = _MpA.#getClosestValidMpAAnchor(ev);
         if (!anchorElement) {

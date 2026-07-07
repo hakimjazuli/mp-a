@@ -9,6 +9,11 @@ export class MpA extends HTMLAnchorElement {
     static #ismpatched: string;
     static #ismpatchedID: string;
     /**
+     * @param {Event} ev
+     * @returns {void}
+     */
+    static #prefetch: (ev: Event) => void;
+    /**
      * @description
      * - string document to be displayed when this class fails to fetch or parse document string;
      * - can be overrided;
@@ -30,6 +35,18 @@ export class MpA extends HTMLAnchorElement {
      * });
      */
     static routerErrorDocString: string;
+    /**
+     * @param {any} object
+     * @param {(ev: Event) => any} event
+     * @param {( keyof HTMLElementEventMap)[]} types
+     */
+    static #chainAddEvent: (object: any, event: (ev: Event) => any, ...types: (keyof HTMLElementEventMap)[]) => void;
+    /**
+     * @param {any} object
+     * @param {(ev: Event) => any} event
+     * @param {( keyof HTMLElementEventMap)[]} types
+     */
+    static #chainRemoveEvent: (object: any, event: (ev: Event) => any, ...types: (keyof HTMLElementEventMap)[]) => void;
     /**
      * @param {HTMLAnchorElement} anchorElement
      * @param {Event} event
@@ -121,11 +138,6 @@ export class MpA extends HTMLAnchorElement {
      * @returns {void|HTMLAnchorElement}
      */
     static #getClosestValidMpAAnchor: (ev: Event) => void | HTMLAnchorElement;
-    /**
-     * @param {Event} ev
-     * @returns {void}
-     */
-    static #prefetch: (ev: Event) => void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     #private;

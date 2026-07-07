@@ -19,6 +19,19 @@ export class MpA extends HTMLAnchorElement {
 	static #ismpatched = 'is-mp-a:m-onkey-pa-tched';
 	static #ismpatchedID = '[id="is-mp-a:m-onkey-pa-tched"]';
 	/**
+	 * @param {Event} ev
+	 * @returns {void}
+	 */
+	static #prefetch = (ev) => {
+		const anchorElement = MpA.#getClosestValidMpAAnchor(ev);
+		if (!anchorElement) {
+			return;
+		}
+		ev.preventDefault();
+		MpA.#getPrefetch(anchorElement);
+	};
+
+	/**
 	 * @description
 	 * - string document to be displayed when this class fails to fetch or parse document string;
 	 * - can be overrided;
@@ -48,18 +61,41 @@ export class MpA extends HTMLAnchorElement {
 	#onclick_ = (ev) => {
 		MpA.#onclick(this, ev);
 	};
+	/**
+	 * @param {Event} ev
+	 */
+	#prefetch_ = (ev) => {
+		ev.preventDefault();
+		MpA.#getPrefetch(this);
+	};
 	connectedCallback() {
-		const prefetch = MpA.#prefetch;
-		this.addEventListener('mousedown', prefetch);
-		this.addEventListener('keydown', prefetch);
+		MpA.#chainAddEvent(this, this.#prefetch_, 'mousedown', 'keydown');
 		this.addEventListener('click', this.#onclick_);
 	}
 	disconnectedCallback() {
-		const prefetch = MpA.#prefetch;
-		this.removeEventListener('mousedown', prefetch);
-		this.removeEventListener('keydown', prefetch);
+		MpA.#chainRemoveEvent(this, this.#prefetch_, 'mousedown', 'keydown');
 		this.removeEventListener('click', this.#onclick_);
 	}
+	/**
+	 * @param {any} object
+	 * @param {(ev: Event) => any} event
+	 * @param {( keyof HTMLElementEventMap)[]} types
+	 */
+	static #chainAddEvent = (object, event, ...types) => {
+		forOfSync(types, (type) => {
+			object.addEventListener(type, event);
+		});
+	};
+	/**
+	 * @param {any} object
+	 * @param {(ev: Event) => any} event
+	 * @param {( keyof HTMLElementEventMap)[]} types
+	 */
+	static #chainRemoveEvent = (object, event, ...types) => {
+		forOfSync(types, (type) => {
+			object.removeventListener(type, event);
+		});
+	};
 	/**
 	 * @param {HTMLAnchorElement} anchorElement
 	 * @param {Event} event
@@ -396,18 +432,6 @@ export class MpA extends HTMLAnchorElement {
 		}
 		return anchorElement;
 	};
-	/**
-	 * @param {Event} ev
-	 * @returns {void}
-	 */
-	static #prefetch = (ev) => {
-		const anchorElement = MpA.#getClosestValidMpAAnchor(ev);
-		if (!anchorElement) {
-			return;
-		}
-		ev.preventDefault();
-		this.#getPrefetch(anchorElement);
-	};
 	static {
 		const mpaID = MpA.#mpaID;
 		// @ts-expect-error
@@ -422,9 +446,7 @@ export class MpA extends HTMLAnchorElement {
 			MpA.#routeChangeCall(window.location.href, false);
 		});
 		const notMpA = MpA.#notMpA;
-		const prefetch = MpA.#prefetch;
-		document.addEventListener('mousedown', prefetch);
-		document.addEventListener('keydown', prefetch);
+		MpA.#chainAddEvent(document, MpA.#prefetch, 'mousedown', 'keydown');
 		document.addEventListener('click', (ev) => {
 			const anchorElement = MpA.#getClosestValidMpAAnchor(ev);
 			if (!anchorElement) {
