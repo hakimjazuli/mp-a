@@ -6,6 +6,8 @@
  */
 export class MpA extends HTMLAnchorElement {
     static #q: qChannel<import("./qChannel.mjs").AnyButUndefined>;
+    static #ismpatched: string;
+    static #ismpatchedID: string;
     /**
      * @description
      * - string document to be displayed when this class fails to fetch or parse document string;
@@ -30,10 +32,10 @@ export class MpA extends HTMLAnchorElement {
     static routerErrorDocString: string;
     /**
      * @param {HTMLAnchorElement} anchorElement
-     * @param {PointerEvent} event
+     * @param {Event} event
      * @returns {void}
      */
-    static #onclick: (anchorElement: HTMLAnchorElement, event: PointerEvent) => void;
+    static #onclick: (anchorElement: HTMLAnchorElement, event: Event) => void;
     /**
      * @param {string} target
      * @returns {string}
@@ -99,12 +101,31 @@ export class MpA extends HTMLAnchorElement {
      * @returns {ViewTransition}
      */
     static #reconcileBody: (newDocument: Document) => ViewTransition;
+    static #prefetchName: string;
+    /**
+     * @param {HTMLAnchorElement} anchorElement
+     * @returns {Promise<Response>}
+     */
+    static #getPrefetch: (anchorElement: HTMLAnchorElement) => Promise<Response>;
     /**
      * @param {string} path
      * @param {boolean} isPush
+     * @param {HTMLAnchorElement} [anchorElement]
      * @returns {void}
      */
-    static #routeChangeCall: (path: string, isPush: boolean) => void;
+    static #routeChangeCall: (path: string, isPush: boolean, anchorElement?: HTMLAnchorElement) => void;
+    static #mpaID: string;
+    static #notMpA: string;
+    /**
+     * @param {Event} ev
+     * @returns {void|HTMLAnchorElement}
+     */
+    static #getClosestValidMpAAnchor: (ev: Event) => void | HTMLAnchorElement;
+    /**
+     * @param {Event} ev
+     * @returns {void}
+     */
+    static #prefetch: (ev: Event) => void;
     connectedCallback(): void;
     disconnectedCallback(): void;
     #private;

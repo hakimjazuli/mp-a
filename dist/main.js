@@ -186,6 +186,8 @@
   // src/MpA.mjs
   var MpA = class _MpA extends HTMLAnchorElement {
     static #q = new qChannel();
+    static #ismpatched = "is-mp-a:m-onkey-pa-tched";
+    static #ismpatchedID = '[id="is-mp-a:m-onkey-pa-tched"]';
     /**
      * @description
      * - string document to be displayed when this class fails to fetch or parse document string;
@@ -216,14 +218,20 @@
       _MpA.#onclick(this, ev);
     };
     connectedCallback() {
+      const prefetch = _MpA.#prefetch;
+      this.addEventListener("mousedown", prefetch);
+      this.addEventListener("keydown", prefetch);
       this.addEventListener("click", this.#onclick_);
     }
     disconnectedCallback() {
+      const prefetch = _MpA.#prefetch;
+      this.removeEventListener("mousedown", prefetch);
+      this.removeEventListener("keydown", prefetch);
       this.removeEventListener("click", this.#onclick_);
     }
     /**
      * @param {HTMLAnchorElement} anchorElement
-     * @param {PointerEvent} event
+     * @param {Event} event
      * @returns {void}
      */
     static #onclick = (anchorElement, event) => {
@@ -236,7 +244,7 @@
         scrollToTarget(_MpA.#getHashValue(href));
         return;
       }
-      this.#routeChangeCall(href, true);
+      this.#routeChangeCall(href, true, anchorElement);
     };
     /**
      * @param {string} target
@@ -360,8 +368,8 @@
           return;
         }
         if (ref instanceof HTMLScriptElement) {
-          if (ref.id == "is-mp-a:m-onkey-pa-tched") {
-            if (!document.head.querySelector('[id="is-mp-a:m-onkey-pa-tched"]')) {
+          if (ref.id == _MpA.#ismpatched) {
+            if (!document.head.querySelector(_MpA.#ismpatchedID)) {
               document.head.appendChild(ref);
             } else {
               ref.remove();
@@ -464,15 +472,36 @@
         document.body.innerHTML = newDocument.body.innerHTML;
       });
     };
+    static #prefetchName = "mp-a:prefetch";
+    /**
+     * @param {HTMLAnchorElement} anchorElement
+     * @returns {Promise<Response>}
+     */
+    static #getPrefetch = (anchorElement) => {
+      const prefetchName = _MpA.#prefetchName;
+      if (
+        // @ts-expect-error
+        !anchorElement[prefetchName]
+      ) {
+        anchorElement[prefetchName] = fetch(_MpA.#resolvePath(anchorElement.href));
+      }
+      return anchorElement[prefetchName];
+    };
     /**
      * @param {string} path
      * @param {boolean} isPush
+     * @param {HTMLAnchorElement} [anchorElement]
      * @returns {void}
      */
-    static #routeChangeCall = (path, isPush) => {
+    static #routeChangeCall = (path, isPush, anchorElement) => {
       path = _MpA.#resolvedPath = _MpA.#resolvePath(path);
       tryAsync(async () => {
-        const res = await fetch(path);
+        let res;
+        if (anchorElement instanceof HTMLAnchorElement) {
+          res = await _MpA.#getPrefetch(anchorElement);
+        } else {
+          res = await fetch(path);
+        }
         return [await res.text(), path];
       }).then(([text, error]) => {
         _MpA.#q.callback(_MpA.#routeChangeCall, async ({ isLastOnQ }) => {
@@ -495,8 +524,37 @@
         });
       });
     };
+    static #mpaID = "is-mp-a";
+    static #notMpA = "not-mp-a";
+    /**
+     * @param {Event} ev
+     * @returns {void|HTMLAnchorElement}
+     */
+    static #getClosestValidMpAAnchor = (ev) => {
+      const target = ev.target;
+      if (!target || !(target instanceof Element)) {
+        return;
+      }
+      const anchorElement = target.closest("a");
+      if (!anchorElement || anchorElement.hasAttribute(_MpA.#notMpA) || anchorElement.getAttribute("href")?.startsWith("#") || anchorElement.getAttribute("is") == "mp-a") {
+        return;
+      }
+      return anchorElement;
+    };
+    /**
+     * @param {Event} ev
+     * @returns {void}
+     */
+    static #prefetch = (ev) => {
+      const anchorElement = _MpA.#getClosestValidMpAAnchor(ev);
+      if (!anchorElement) {
+        return;
+      }
+      ev.preventDefault();
+      this.#getPrefetch(anchorElement);
+    };
     static {
-      const mpaID = "is-mp-a";
+      const mpaID = _MpA.#mpaID;
       if (!window[mpaID]) {
         window[mpaID] = {};
       }
@@ -505,14 +563,13 @@
         ev.preventDefault();
         _MpA.#routeChangeCall(window.location.href, false);
       });
-      const notMpA = "not-mp-a";
+      const notMpA = _MpA.#notMpA;
+      const prefetch = _MpA.#prefetch;
+      document.addEventListener("mousedown", prefetch);
+      document.addEventListener("keydown", prefetch);
       document.addEventListener("click", (ev) => {
-        const target = ev.target;
-        if (!target || !(target instanceof Element)) {
-          return;
-        }
-        const anchorElement = target.closest("a");
-        if (!anchorElement || anchorElement.hasAttribute(notMpA) || anchorElement.getAttribute("href")?.startsWith("#") || anchorElement.getAttribute("is") == "mp-a") {
+        const anchorElement = _MpA.#getClosestValidMpAAnchor(ev);
+        if (!anchorElement) {
           return;
         }
         return _MpA.#onclick(anchorElement, ev);

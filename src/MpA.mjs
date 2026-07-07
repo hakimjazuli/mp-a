@@ -16,6 +16,8 @@ import { trySync } from './trySync.mjs';
  */
 export class MpA extends HTMLAnchorElement {
 	static #q = new qChannel();
+	static #ismpatched = 'is-mp-a:m-onkey-pa-tched';
+	static #ismpatchedID = '[id="is-mp-a:m-onkey-pa-tched"]';
 	/**
 	 * @description
 	 * - string document to be displayed when this class fails to fetch or parse document string;
@@ -47,14 +49,20 @@ export class MpA extends HTMLAnchorElement {
 		MpA.#onclick(this, ev);
 	};
 	connectedCallback() {
+		const prefetch = MpA.#prefetch;
+		this.addEventListener('mousedown', prefetch);
+		this.addEventListener('keydown', prefetch);
 		this.addEventListener('click', this.#onclick_);
 	}
 	disconnectedCallback() {
+		const prefetch = MpA.#prefetch;
+		this.removeEventListener('mousedown', prefetch);
+		this.removeEventListener('keydown', prefetch);
 		this.removeEventListener('click', this.#onclick_);
 	}
 	/**
 	 * @param {HTMLAnchorElement} anchorElement
-	 * @param {PointerEvent} event
+	 * @param {Event} event
 	 * @returns {void}
 	 */
 	static #onclick = (anchorElement, event) => {
@@ -67,7 +75,7 @@ export class MpA extends HTMLAnchorElement {
 			scrollToTarget(MpA.#getHashValue(href));
 			return;
 		}
-		this.#routeChangeCall(href, true);
+		this.#routeChangeCall(href, true, anchorElement);
 	};
 	/**
 	 * @param {string} target
@@ -200,8 +208,8 @@ export class MpA extends HTMLAnchorElement {
 				return;
 			}
 			if (ref instanceof HTMLScriptElement) {
-				if (ref.id == 'is-mp-a:m-onkey-pa-tched') {
-					if (!document.head.querySelector('[id="is-mp-a:m-onkey-pa-tched"]')) {
+				if (ref.id == MpA.#ismpatched) {
+					if (!document.head.querySelector(MpA.#ismpatchedID)) {
 						document.head.appendChild(ref);
 					} else {
 						ref.remove();
@@ -312,15 +320,38 @@ export class MpA extends HTMLAnchorElement {
 			document.body.innerHTML = newDocument.body.innerHTML;
 		});
 	};
+	static #prefetchName = 'mp-a:prefetch';
+	/**
+	 * @param {HTMLAnchorElement} anchorElement
+	 * @returns {Promise<Response>}
+	 */
+	static #getPrefetch = (anchorElement) => {
+		const prefetchName = MpA.#prefetchName;
+		if (
+			// @ts-expect-error
+			!anchorElement[prefetchName]
+		) {
+			// @ts-expect-error
+			anchorElement[prefetchName] = fetch(MpA.#resolvePath(anchorElement.href));
+		}
+		// @ts-expect-error
+		return anchorElement[prefetchName];
+	};
 	/**
 	 * @param {string} path
 	 * @param {boolean} isPush
+	 * @param {HTMLAnchorElement} [anchorElement]
 	 * @returns {void}
 	 */
-	static #routeChangeCall = (path, isPush) => {
+	static #routeChangeCall = (path, isPush, anchorElement) => {
 		path = MpA.#resolvedPath = MpA.#resolvePath(path);
 		tryAsync(async () => {
-			const res = await fetch(path);
+			let res;
+			if (anchorElement instanceof HTMLAnchorElement) {
+				res = await MpA.#getPrefetch(anchorElement);
+			} else {
+				res = await fetch(path);
+			}
 			return [await res.text(), path];
 		}).then(([text, error]) => {
 			MpA.#q.callback(MpA.#routeChangeCall, async ({ isLastOnQ }) => {
@@ -343,8 +374,42 @@ export class MpA extends HTMLAnchorElement {
 			});
 		});
 	};
+	static #mpaID = 'is-mp-a';
+	static #notMpA = 'not-mp-a';
+	/**
+	 * @param {Event} ev
+	 * @returns {void|HTMLAnchorElement}
+	 */
+	static #getClosestValidMpAAnchor = (ev) => {
+		const target = ev.target;
+		if (!target || !(target instanceof Element)) {
+			return;
+		}
+		const anchorElement = target.closest('a');
+		if (
+			!anchorElement ||
+			anchorElement.hasAttribute(MpA.#notMpA) ||
+			anchorElement.getAttribute('href')?.startsWith('#') ||
+			anchorElement.getAttribute('is') == 'mp-a'
+		) {
+			return;
+		}
+		return anchorElement;
+	};
+	/**
+	 * @param {Event} ev
+	 * @returns {void}
+	 */
+	static #prefetch = (ev) => {
+		const anchorElement = MpA.#getClosestValidMpAAnchor(ev);
+		if (!anchorElement) {
+			return;
+		}
+		ev.preventDefault();
+		this.#getPrefetch(anchorElement);
+	};
 	static {
-		const mpaID = 'is-mp-a';
+		const mpaID = MpA.#mpaID;
 		// @ts-expect-error
 		if (!window[mpaID]) {
 			// @ts-expect-error
@@ -356,19 +421,13 @@ export class MpA extends HTMLAnchorElement {
 			ev.preventDefault();
 			MpA.#routeChangeCall(window.location.href, false);
 		});
-		const notMpA = 'not-mp-a';
+		const notMpA = MpA.#notMpA;
+		const prefetch = MpA.#prefetch;
+		document.addEventListener('mousedown', prefetch);
+		document.addEventListener('keydown', prefetch);
 		document.addEventListener('click', (ev) => {
-			const target = ev.target;
-			if (!target || !(target instanceof Element)) {
-				return;
-			}
-			const anchorElement = target.closest('a');
-			if (
-				!anchorElement ||
-				anchorElement.hasAttribute(notMpA) ||
-				anchorElement.getAttribute('href')?.startsWith('#') ||
-				anchorElement.getAttribute('is') == 'mp-a'
-			) {
+			const anchorElement = MpA.#getClosestValidMpAAnchor(ev);
+			if (!anchorElement) {
 				return;
 			}
 			return MpA.#onclick(anchorElement, ev);
