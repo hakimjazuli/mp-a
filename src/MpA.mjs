@@ -27,7 +27,13 @@ export class MpA extends HTMLAnchorElement {
 		if (!anchorElement) {
 			return;
 		}
-		ev.preventDefault();
+		/**
+		 * DON'T USE
+		 * ```js
+		 * ev.preventDefault();
+		 * ```
+		 * it will block key pres tab;
+		 */
 		MpA.#getPrefetch(anchorElement);
 	};
 
@@ -107,11 +113,14 @@ export class MpA extends HTMLAnchorElement {
 	#onclick_ = (ev) => {
 		MpA.#onclick(this, ev);
 	};
-	/**
-	 * @param {Event} ev
-	 */
-	#prefetch_ = (ev) => {
-		ev.preventDefault();
+	#prefetch_ = () => {
+		/**
+		 * DON'T USE
+		 * ```js
+		 * ev.preventDefault();
+		 * ```
+		 * it will block key pres tab;
+		 */
 		MpA.#getPrefetch(this);
 	};
 	connectedCallback() {

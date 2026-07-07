@@ -197,7 +197,6 @@
       if (!anchorElement) {
         return;
       }
-      ev.preventDefault();
       _MpA.#getPrefetch(anchorElement);
     };
     /**
@@ -275,11 +274,7 @@
     #onclick_ = (ev) => {
       _MpA.#onclick(this, ev);
     };
-    /**
-     * @param {Event} ev
-     */
-    #prefetch_ = (ev) => {
-      ev.preventDefault();
+    #prefetch_ = () => {
       _MpA.#getPrefetch(this);
     };
     connectedCallback() {
