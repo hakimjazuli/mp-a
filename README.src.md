@@ -140,7 +140,8 @@ runtime assets needed to activate the engine::
 </head>
 ```
 
-- `main.js`: main script to add Client Side Routing Behaviour, needs to be the last script right before body closing tag;
+- `main.js`: main script to add Client Side Routing Behaviour, needs to be the last script right
+  before body closing tag;
 
 ```html
 <body>
@@ -156,9 +157,43 @@ runtime assets needed to activate the engine::
 ```html
 <body>
 	<!-- other body elements -->
-	<!-- <script src="/assets/js/ungap-custom-elements.min.js"></script> -->
+	<script src="/assets/js/ungap-custom-elements.min.js"></script>
 	<!-- other scripts -->
 	<script src="/assets/js/main.min.js"></script>
+</body>
+```
+
+- `cs-s.min.js`: minified [CsS](#css) script;
+
+```html
+<body>
+	<style>
+		.cs-s {
+			display: none;
+		}
+	</style>
+	<div class="cs-s">red</div>
+	<style target="prev">
+		:target {
+			backround: red;
+		}
+	</style>
+	<style target="next">
+		:target {
+			backround: blue;
+		}
+	</style>
+	<div class="cs-s">blue</div>
+	<div class="cs-s">
+		<style target="parent">
+			:target {
+				backround: cyan;
+			}
+		</style>
+		<div>cyan</div>
+		<div>cyan</div>
+	</div>
+	<script src="/assets/js/cs-s.min.js"></script>
 </body>
 ```
 

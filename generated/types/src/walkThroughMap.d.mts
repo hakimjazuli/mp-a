@@ -12,4 +12,4 @@
  * // code
  * })
  */
-export function walkThroughMap<KEY, VAL>(mapInstance: Map<KEY, VAL>, callback: (entry: [key: KEY, value: VAL]) => void): void;
+export declare function walkThroughMap<KEY, VAL>(mapInstance: Map<KEY, VAL>, callback: (entry: [key: KEY, value: VAL]) => void): void;

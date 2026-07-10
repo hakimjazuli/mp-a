@@ -7,4 +7,4 @@
  * @returns {[RESULT,undefined]|
  * [undefined,Error]}
  */
-export function trySync<RESULT>(function_: () => RESULT): [RESULT, undefined] | [undefined, Error];
+export declare function trySync<RESULT>(function_: () => RESULT): [RESULT, undefined] | [undefined, Error];

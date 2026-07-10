@@ -11,7 +11,7 @@
  * - typehint according to your js flavor, so the function make setOfResult typed;
  * @returns {[Set<RETURNTYPE>, Set<Error>]}
  */
-export function forOfSync<T extends unknown, RETURNTYPE extends unknown>(iterable: Iterable<T>, handlerCallback: (value: T, options: {
+export declare function forOfSync<T extends any, RETURNTYPE extends any>(iterable: Iterable<T>, handlerCallback: (value: T, options: {
     prevError: Error | undefined;
     breakEarly: () => void;
 }) => RETURNTYPE | undefined): [Set<RETURNTYPE>, Set<Error>];
