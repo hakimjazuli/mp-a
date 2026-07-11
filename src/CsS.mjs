@@ -10,7 +10,7 @@
  *   which DOM element the style block applies to.
  * >- Rewrites placeholders:
  * >>- `:target` → rewritten to a unique class selector (e.g. `.cs-s-1`)
- * >>- `?name`   → rewritten to a unique identifier string (e.g. `cs-s-1`)
+ * >>- `-name`   → rewritten to a unique identifier string (e.g. `cs-s-1`)
  * >- Automatically adds the generated class to the target element and removes
  *   `.cs-s` once styles are applied.
  *
@@ -25,9 +25,9 @@
  * <style>.cs-s{display:none;}</style>
  * <style is="cs-s" target="next">
  * :target {
- *   animation: ?name 1s ease-in-out forwards;
+ *   animation: -name 1s ease-in-out forwards;
  * }
- * @keyframes ?name {
+ * @keyframes -name {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }
@@ -121,7 +121,7 @@ export class CsS extends HTMLStyleElement {
 	#reparse = () => {
 		this.innerHTML = this.innerHTML
 			.replace(/\:target/g, this.#targetClass)
-			.replace(/\?name/g, `${this.#targetID}`);
+			.replace(/\-name/g, `${this.#targetID}`);
 	};
 	#assumeReady = () => {
 		const targetRef = this.targetRef;
