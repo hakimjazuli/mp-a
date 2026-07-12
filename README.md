@@ -221,14 +221,14 @@ runtime assets needed to activate the engine::
 
 <h2 id="exported-api-and-type-list">exported-api-and-type-list</h2>
 
-- [browser.CsS](#css)
+- [browser.IsCsS](#iscss)
 - [browser.MpA](#mpa)
 
 ---
 
-<h2 id="css">browser.CsS</h2>
+<h2 id="iscss">browser.IsCsS</h2>
 
-#### reference: `CsS`
+#### reference: `IsCsS`
 
 Utility custom element for scoped styling.
 

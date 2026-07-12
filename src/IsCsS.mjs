@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * @description
  * Utility custom element for scoped styling.
@@ -53,12 +55,83 @@
  * developers write animations directly in CSS, scoped per element, without
  * needing imperative JS timelines.
  */
-export declare class CsS extends HTMLStyleElement {
-    #private;
-    targetRef: Element | HTMLElement | null | undefined;
-    connectedCallback(): void;
-    /**
-     * @type {string}
-     */
-    innerHTML: string;
+export class IsCsS extends HTMLStyleElement {
+	static *#idGenerator() {
+		let counter = 0;
+		while (true) {
+			yield ++counter;
+		}
+	}
+	static #generatorRef = IsCsS.#idGenerator();
+	/**
+	 * @type {string|undefined}
+	 */
+	#targetID_;
+	get #targetID() {
+		if (!this.#targetID_) {
+			this.#targetID_ = `cs-s-${IsCsS.#generatorRef.next().value}`;
+		}
+		return this.#targetID_;
+	}
+	/**
+	 * @type {string|undefined}
+	 */
+	#targetClass_;
+	get #targetClass() {
+		if (!this.#targetClass_) {
+			this.#targetClass_ = `.${this.#targetID}`;
+		}
+		return this.#targetClass_;
+	}
+	connectedCallback() {
+		const target = this.getAttribute('target');
+		switch (target) {
+			case 'prev':
+				this.targetRef = this.previousElementSibling;
+				break;
+			case 'parent':
+				this.targetRef = this.parentElement;
+				break;
+			case 'next':
+			default:
+				if (target !== 'next') {
+					console.warn({
+						element: this,
+						target: this.getAttributeNode('target'),
+						'target should be one of the following': {
+							/** */
+							next: 'target `nextElementSibling`',
+							prev: 'target `nextElementSibling`',
+							parent: 'target `parentElement`',
+						},
+						autoUsesDefaultValue: 'next',
+					});
+				}
+				this.targetRef = this.nextElementSibling;
+				break;
+		}
+		this.#reparse();
+		this.#assumeReady();
+	}
+	/**
+	 * @type {string}
+	 */
+	// @ts-expect-error
+	innerHTML;
+	#reparse = () => {
+		this.innerHTML = this.innerHTML
+			.replace(/\:target/g, this.#targetClass)
+			.replace(/\-name/g, `${this.#targetID}`);
+	};
+	#assumeReady = () => {
+		const targetRef = this.targetRef;
+		if (!targetRef) {
+			return;
+		}
+		targetRef.classList.add(this.#targetID);
+		targetRef.classList.remove('cs-s');
+	};
+	static {
+		customElements.define('cs-s', IsCsS, { extends: 'style' });
+	}
 }

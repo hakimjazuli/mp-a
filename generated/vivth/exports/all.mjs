@@ -4,5 +4,5 @@
  * @copyright
  * this library is build and distributed under MIT license
  */
-export { CsS } from '../../../src/CsS.mjs';
+export { IsCsS } from '../../../src/IsCsS.mjs';
 export { MpA } from '../../../src/MpA.mjs';
