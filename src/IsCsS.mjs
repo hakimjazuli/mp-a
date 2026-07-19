@@ -1,17 +1,20 @@
 // @ts-check
 
+import { trySync } from './trySync.mjs';
+import { validScopeAttributeValue } from './validScopeAttributeValue.mjs';
+
 /**
  * @description
  * Utility custom element for scoped styling.
  *
  * - Overview
  * >- Extends `<style>` with `is="cs-s"` to provide per‑element scoped CSS.
- * >- Uses `target` attribute (`next`, `prev`, `parent`) to determine
+ * >- Uses `scope` attribute (`next`, `prev`, `parent`, `closest cssSelector`) to determine
  *   which DOM element the style block applies to.
  * >- Rewrites placeholders:
- * >>- `:target` → rewritten to a unique class selector (e.g. `.cs-s-1`)
- * >>- `-name`   → rewritten to a unique identifier string (e.g. `cs-s-1`)
- * >- Automatically adds the generated class to the target element and removes
+ * >>- `--scope` → rewritten to a unique class selector (e.g. `.cs-s-1`)
+ * >>- `--name`   → rewritten to a unique identifier string (e.g. ` cs-s-1`)
+ * >- Automatically adds the generated class to the scope element and removes
  *   `.cs-s` once styles are applied.
  *
  * - Features
@@ -23,16 +26,28 @@
  * - Example
  * ```html
  * <style>.cs-s{display:none;}</style>
- * <style is="cs-s" target="next">
- * :target {
- *   animation: -name 1s ease-in-out forwards;
+ * <style is="cs-s" scope="next">
+ * --scope {
+ *   animation: --name 1s ease-in-out forwards;
  * }
- * @keyframes -name {
+ * @keyframes --name {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }
  * </style>
  * <img src="panel.png" class="cs-s">
+ * <div class="cs-s">
+ * 	red
+ * 	<div>
+ * 		<div>
+ * 			<style is="cs-s" scope=".cs-s">
+ * 				--scope {
+ * 					background: red;
+ * 				}
+ * 			</style>
+ * 		</div>
+ * 	</div>
+ * </div>
  * ```
  *
  * Runtime rewrite:
@@ -66,70 +81,86 @@ export class IsCsS extends HTMLStyleElement {
 	/**
 	 * @type {string|undefined}
 	 */
-	#targetID_;
-	get #targetID() {
-		if (!this.#targetID_) {
-			this.#targetID_ = `cs-s-${IsCsS.#generatorRef.next().value}`;
+	#scopeID_;
+	get #scopeID() {
+		if (!this.#scopeID_) {
+			this.#scopeID_ = `cs-s-${IsCsS.#generatorRef.next().value}`;
 		}
-		return this.#targetID_;
+		return this.#scopeID_;
 	}
 	/**
 	 * @type {string|undefined}
 	 */
-	#targetClass_;
-	get #targetClass() {
-		if (!this.#targetClass_) {
-			this.#targetClass_ = `.${this.#targetID}`;
+	#scopeClass_;
+	get #scopeClass() {
+		if (!this.#scopeClass_) {
+			this.#scopeClass_ = `.${this.#scopeID}`;
 		}
-		return this.#targetClass_;
+		return this.#scopeClass_;
 	}
 	connectedCallback() {
-		const target = this.getAttribute('target');
-		switch (target) {
-			case 'prev':
-				this.targetRef = this.previousElementSibling;
-				break;
-			case 'parent':
-				this.targetRef = this.parentElement;
-				break;
-			case 'next':
-			default:
-				if (target !== 'next') {
-					console.warn({
-						element: this,
-						target: this.getAttributeNode('target'),
-						'target should be one of the following': {
-							/** */
-							next: 'target `nextElementSibling`',
-							prev: 'target `nextElementSibling`',
-							parent: 'target `parentElement`',
-						},
-						autoUsesDefaultValue: 'next',
-					});
-				}
-				this.targetRef = this.nextElementSibling;
-				break;
-		}
+		this.#checkScope();
 		this.#reparse();
 		this.#assumeReady();
 	}
 	/**
-	 * @type {string}
+	 * @type {Element|null|undefined}
 	 */
-	// @ts-expect-error
-	innerHTML;
+	#scopeRef;
+	#checkScope = () => {
+		const scope = this.getAttribute('scope');
+		switch (scope) {
+			case 'prev':
+				this.#scopeRef = this.previousElementSibling;
+				break;
+			case 'parent':
+				this.#scopeRef = this.parentElement;
+				break;
+			case 'next':
+				this.#scopeRef = this.nextElementSibling;
+				break;
+			default:
+				const [element, warnClosest] = this.#checkClosest(scope);
+				if (warnClosest) {
+					console.warn({
+						warnClosest,
+						validScopeAttributeValue,
+					});
+					this.#scopeRef = this.parentElement;
+				} else {
+					this.#scopeRef = element;
+				}
+				break;
+		}
+	};
+	/**
+	 * @param {string|null} scope
+	 * @returns {ReturnType<typeof trySync<Element>>}
+	 */
+	#checkClosest = (scope) => {
+		return trySync(() => {
+			const closest = this.closest(
+				// @ts-expect-error
+				scope,
+			);
+			if (!closest) {
+				throw `IsCsS couldn't target .closest('${scope}') default to "parent" instead`;
+			}
+			return closest;
+		});
+	};
 	#reparse = () => {
-		this.innerHTML = this.innerHTML
-			.replace(/\:target/g, this.#targetClass)
-			.replace(/\-name/g, `${this.#targetID}`);
+		this.innerHTML =
+			// @ts-expect-error
+			this.innerHTML.replace(/--scope/g, this.#scopeClass).replace(/--name/g, this.#scopeID);
 	};
 	#assumeReady = () => {
-		const targetRef = this.targetRef;
-		if (!targetRef) {
+		const scopeRef = this.#scopeRef;
+		if (!scopeRef) {
 			return;
 		}
-		targetRef.classList.add(this.#targetID);
-		targetRef.classList.remove('cs-s');
+		scopeRef.classList.add(this.#scopeID);
+		scopeRef.classList.remove('cs-s');
 	};
 	static {
 		customElements.define('cs-s', IsCsS, { extends: 'style' });

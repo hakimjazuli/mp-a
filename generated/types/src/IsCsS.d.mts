@@ -4,12 +4,12 @@
  *
  * - Overview
  * >- Extends `<style>` with `is="cs-s"` to provide per‑element scoped CSS.
- * >- Uses `target` attribute (`next`, `prev`, `parent`) to determine
+ * >- Uses `scope` attribute (`next`, `prev`, `parent`, `closest cssSelector`) to determine
  *   which DOM element the style block applies to.
  * >- Rewrites placeholders:
- * >>- `:target` → rewritten to a unique class selector (e.g. `.cs-s-1`)
- * >>- `-name`   → rewritten to a unique identifier string (e.g. `cs-s-1`)
- * >- Automatically adds the generated class to the target element and removes
+ * >>- `--scope` → rewritten to a unique class selector (e.g. `.cs-s-1`)
+ * >>- `--name`   → rewritten to a unique identifier string (e.g. ` cs-s-1`)
+ * >- Automatically adds the generated class to the scope element and removes
  *   `.cs-s` once styles are applied.
  *
  * - Features
@@ -21,16 +21,28 @@
  * - Example
  * ```html
  * <style>.cs-s{display:none;}</style>
- * <style is="cs-s" target="next">
- * :target {
- *   animation: -name 1s ease-in-out forwards;
+ * <style is="cs-s" scope="next">
+ * --scope {
+ *   animation: --name 1s ease-in-out forwards;
  * }
- * @keyframes -name {
+ * @keyframes --name {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }
  * </style>
  * <img src="panel.png" class="cs-s">
+ * <div class="cs-s">
+ * 	red
+ * 	<div>
+ * 		<div>
+ * 			<style is="cs-s" scope=".cs-s">
+ * 				--scope {
+ * 					background: red;
+ * 				}
+ * 			</style>
+ * 		</div>
+ * 	</div>
+ * </div>
  * ```
  *
  * Runtime rewrite:
@@ -55,10 +67,5 @@
  */
 export declare class IsCsS extends HTMLStyleElement {
     #private;
-    targetRef: Element | HTMLElement | null | undefined;
     connectedCallback(): void;
-    /**
-     * @type {string}
-     */
-    innerHTML: string;
 }
