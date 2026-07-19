@@ -1,7 +1,7 @@
 {
   "name": "@hakim_jazuli/mp-a",
   "module": "./generated/vivth/exports/all.mjs",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "type": "module",
   "main": "./generated/vivth/exports/all.mjs",
   "devDependencies": {
