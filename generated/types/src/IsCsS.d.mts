@@ -8,7 +8,8 @@
  *   which DOM element the style block applies to.
  * >- Rewrites placeholders:
  * >>- `--scope` → rewritten to a unique class selector (e.g. `.cs-s-1`)
- * >>- `--name`   → rewritten to a unique identifier string (e.g. ` cs-s-1`)
+ * >>- `--varname`   → rewritten to a unique identifier string (e.g. `--cs-s-1`)
+ * >>- `__varname`   → rewritten to a unique identifier string (e.g. `__cs-s-1`)
  * >- Automatically adds the generated class to the scope element and removes
  *   `.cs-s` once styles are applied.
  *
@@ -23,9 +24,9 @@
  * <style>.cs-s{display:none;}</style>
  * <style is="cs-s" scope="next">
  * --scope {
- *   animation: --name 1s ease-in-out forwards;
+ *   animation: __varname 1s ease-in-out forwards;
  * }
- * @keyframes --name {
+ * @keyframes __varname {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }
@@ -48,9 +49,9 @@
  * Runtime rewrite:
  * ```css
  * .cs-s-1 {
- *   animation: cs-s-1 1s ease-in-out forwards;
+ *   animation: __cs-s-1 1s ease-in-out forwards;
  * }
- * @keyframes cs-s-1 {
+ * @keyframes __cs-s-1 {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }

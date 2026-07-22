@@ -221,8 +221,83 @@ runtime assets needed to activate the engine::
 
 <h2 id="exported-api-and-type-list">exported-api-and-type-list</h2>
 
+- [browser.CsS](#css)
 - [browser.IsCsS](#iscss)
 - [browser.MpA](#mpa)
+- [node.ViteCsS](#vitecss)
+
+---
+
+<h2 id="css">browser.CsS</h2>
+
+#### reference: `CsS`
+
+- tagname `cs-s` version of [IsCsS](#iscss);
+
+```html
+<div class="cs-s">salmon</div>
+<cs-s scope="prev"> --scope { background: salmon; } </cs-s>
+```
+
+- slightly more efficient then [IsCsS](#iscss);
+
+> - skip the initial pre replaced `--target` and `--name` from being parsed by css enigine;
+
+- however you might need additional setup for
+
+> - your `IDE` to recognise the css string; OR
+> - your `build tools` to recognise the css string;
+>
+> > - in case you use `vite`, you can use this class instead of `IsCsS`, and [ViteCsS](#vitecss), then uses `style[scope]` directly;
+
+```html
+<div class="cs-s">
+  <style scope="parent">
+    --scope {
+      background: red;
+      div {
+        background: salmon;
+      }
+    }
+  </style>
+  red
+  <div>salmon</div>
+  <div class="cs-s">
+    cyan
+    <style scope="parent">
+      --scope {
+        background: cyan;
+      }
+    </style>
+  </div>
+</div>
+```
+
+#### reference: `CsS.css`
+
+- syntax helper for IDE to recognize string as css string;
+
+```js
+/**
+ * @param {TemplateStringsArray} strings
+ * @param {...string} values
+ * @returns {{scope:(pseudo:'next'|'prev'|'parent'|{closest:string})=>HTMLElement}}
+ */
+```
+
+- <i>example</i>:
+
+```js
+import { CSs } from "@hakim_jazuli/mp-a/browser";
+const { css } = CSs;
+const cssElement = css`
+  --scope {
+    background: salmon;
+  }
+`.scope("parent");
+```
+
+*) <sub>[go to exported-api-and-type-list](#exported-api-and-type-list)</sub>
 
 ---
 
@@ -240,7 +315,8 @@ Utility custom element for scoped styling.
 > - Rewrites placeholders:
 >
 > > - `--scope` → rewritten to a unique class selector (e.g. `.cs-s-1`)
-> > - `--name` → rewritten to a unique identifier string (e.g. ` cs-s-1`)
+> > - `--varname` → rewritten to a unique identifier string (e.g. `--cs-s-1`)
+> > - `__varname` → rewritten to a unique identifier string (e.g. `__cs-s-1`)
 >
 > - Automatically adds the generated class to the scope element and removes
 >   `.cs-s` once styles are applied.
@@ -261,9 +337,9 @@ Utility custom element for scoped styling.
  * <style>.cs-s{display:none;}</style>
  * <style is="cs-s" scope="next">
  * --scope {
- *   animation: --name 1s ease-in-out forwards;
+ *   animation: __varname 1s ease-in-out forwards;
  * }
- * @keyframes --name {
+ * @keyframes __varname {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }
@@ -286,9 +362,9 @@ Utility custom element for scoped styling.
  * Runtime rewrite:
  * ```css
  * .cs-s-1 {
- *   animation: cs-s-1 1s ease-in-out forwards;
+ *   animation: __cs-s-1 1s ease-in-out forwards;
  * }
- * @keyframes cs-s-1 {
+ * @keyframes __cs-s-1 {
  *   from { opacity: 0; transform: translateY(20px); }
  *   to   { opacity: 1; transform: translateY(0); }
  * }
@@ -399,6 +475,44 @@ document.addEventListener("DOMContentLoaded", () => {
  			</body>
  		</html>
  		`;
+});
+```
+
+*) <sub>[go to exported-api-and-type-list](#exported-api-and-type-list)</sub>
+
+---
+
+<h2 id="vitecss">node.ViteCsS</h2>
+
+#### reference: `ViteCsS`
+
+- `vite` plugin to `render` & `build` `style[is="cs-s"]` tag of the source into using `cs-s` tag instead;
+
+```js
+/**
+ * @param {Array<string>} extentions
+ * - file extensions to checked and render with the transformation;
+ * - case insensitive;
+ * - auto prefixed with `.`;
+ * @returns {import('vite').PluginOption}
+ */
+```
+
+- <i>example</i>:
+
+```js
+import { ViteCsS } from "@hakim_jazuli/mp-a/node";
+import process from "node:process";
+export default defineConfig({
+  build: {},
+  plugins: [
+    ViteCsS(
+      "mjs", // standard esm extension
+      "mts", // module ts project extension
+      "html", // standard html entry point
+      "js", // post bundled handler
+    ),
+  ],
 });
 ```
 

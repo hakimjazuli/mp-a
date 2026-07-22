@@ -7,6 +7,7 @@
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^7.0.2",
+    "vite": "^8.1.5",
     "vivth": "^1.5.12"
   },
   "dependencies": {
@@ -28,6 +29,10 @@
     "./neutral": {
       "import": "./generated/vivth/exports/neutral.mjs",
       "types": "./generated/types/generated/vivth/exports/neutral.d.mts"
+    },
+    "./node": {
+      "import": "./generated/vivth/exports/node.mjs",
+      "types": "./generated/types/generated/vivth/exports/node.d.mts"
     }
   },
   "license": "MIT",

@@ -29,4 +29,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 *.bsdesign
 .vscode
 -*.mjs
+-*.js
 -*.d.mts
